@@ -10,6 +10,7 @@ cd type-garden
 npm install
 npm run dev
 ```
+<img width="960" height="499" alt="Screenshot 2026-10-31 132719" src="https://github.com/user-attachments/assets/e0ad449e-7d4a-4de1-a21a-44538e36c272" />
 
 
 ## 🚀 Project Structure
