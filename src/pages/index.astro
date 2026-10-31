@@ -1,0 +1,101 @@
+---
+import "../styles/style.css"
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Type Garden</title>
+<meta name="theme-color" content="#000000">
+<meta name="background-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Type Garden">
+<link rel="icon" id="fav" type="image/png" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<meta name="generator" content={Astro.generator}>
+
+<!-- Meta tags for SEO and Open Graph -->
+<meta name="description" content="Type Garden — a generative typography art project. Type a message, choose a flower, and watch it grow in a responsive garden that blooms with your words.">
+<meta name="keywords" content="generative art, typography, animated text, poetic typography, interactive art, CSS animation, garden, flowers">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://[YOUR-SITE-URL]/type-garden/">
+<meta property="og:title" content="Type Garden — Generative Typography Art">
+<meta property="og:description" content="Type a message, choose a flower, and watch it bloom. A poetic interactive typography experience.">
+<meta property="og:image" content="https://[YOUR-SITE-URL]/type-garden/images/opengraph.jpg">
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://[YOUR-SITE-URL]/type-garden/">
+<meta property="twitter:title" content="Type Garden — Generative Typography Art">
+<meta property="twitter:description" content="Type a message, choose a flower, and watch it bloom.">
+<meta property="twitter:image" content="https://[YOUR-SITE-URL]/type-garden/images/opengraph.jpg">
+</head>
+<body>
+<div data-tg="app" id="app">
+  <canvas id="cv"></canvas>
+  <input id="inp" aria-label="Type to grow a garden" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
+
+  <div data-tg="hdr" id="hdr"><span class="credit"><span class="made">Made with </span><span class="heart">♥️</span> by Priyam Ghosh</span><a id="kofi" href="https://ko-fi.com/bokunomaou" target="_blank" rel="noopener" aria-label="Support me on Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M7 2v2M11 2v2M15 2v2"/></svg><span>Ko-fi</span></a></div>
+  <div data-tg="modes" id="modes"></div>
+
+  <div data-tg="bar" id="bar">
+    <div data-tg="hints">
+      <span data-tg="fine">type to grow</span><span data-tg="coarse">tap to type</span>
+      <span><kbd>space</kbd>cuts</span>
+      <span><kbd>⌫</kbd>withers</span>
+      <span><kbd>↵</kbd>clears</span>
+      <span data-tg="fine"><kbd>⇧ ↵</kbd>new line</span>
+    </div>
+    <div data-tg="ctrls" id="ctrls"></div>
+  </div>
+
+  <div data-tg="poster" id="poster" hidden>
+    <div data-tg="panel">
+      <div class="sec" style="gap:4px">
+        <div class="ttl">Poster</div>
+        <div class="sub" id="info"></div>
+      </div>
+      <div class="sec">
+        <div class="lbl">Words</div>
+        <textarea id="ptext" rows="2" spellcheck="false"></textarea>
+        <div class="sub">Enter starts a new line</div>
+        <button class="ghost" id="regrow" style="align-self:flex-start">Regrow garden</button>
+      </div>
+      <div class="sec">
+        <div class="lbl">Format</div>
+        <div class="grid2" id="rgrid"></div>
+      </div>
+      <div class="sec">
+        <div class="lbl">Flowers</div>
+        <div class="grid2" id="fgrid"></div>
+      </div>
+      <div class="sec">
+        <div class="lbl">Motion</div>
+        <div class="grid2" id="presets"></div>
+      </div>
+      <div class="sec">
+        <div class="lbl">Palette</div>
+        <div class="grid2" id="pgrid"></div>
+      </div>
+      <div class="sec exp">
+        <div class="lbl" id="explbl">Export · 1080 × 1080 loop</div>
+        <button id="vid"></button>
+        <button id="gifbtn">GIF loop · 540 px</button>
+        <button id="frames">PNG frames (.zip)</button>
+        <div class="sub" id="status" style="min-height:16px"></div>
+      </div>
+    </div>
+    <div data-tg="stage">
+      <canvas id="pcv" width="1080" height="1080"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="../scripts/typegarden.js"></script>
+</body>
+</html>
