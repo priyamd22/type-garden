@@ -81,6 +81,7 @@ class Garden {
     // phone
     this.touch = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
     if (this.touch) document.documentElement.setAttribute('data-touch', '');
+    document.documentElement.setAttribute('data-mode', this.s.mode);
     this.ptype = 'mouse';
     window.addEventListener('pointerdown', e => { this.ptype = e.pointerType || 'mouse'; }, true);
     const relax = e => { if (e.pointerType && e.pointerType !== 'mouse') this.mx = null; };
@@ -93,7 +94,15 @@ class Garden {
     fld.addEventListener('compositionstart', () => { this.composing = true; });
     fld.addEventListener('compositionend', () => { this.composing = false; setTimeout(() => { if (!this.composing) this.inputDiff(fld); }, 0); });
     this.vv = window.visualViewport || null;
-    if (this.vv && this.touch) { this.vv.addEventListener('resize', () => this.syncVV()); this.vv.addEventListener('scroll', () => this.syncVV()); this.syncVV(); }
+    if (this.vv && this.touch) {
+      this.vv.addEventListener('resize', () => this.syncVV());
+      this.vv.addEventListener('scroll', () => {
+        if (this.s.mode === 'type' && document.documentElement.hasAttribute('data-kb')) {
+          this.syncVV();
+        }
+      });
+      this.syncVV();
+    }
 
     // focus + butterflies
     this.app.addEventListener('pointerdown', ev => {
@@ -141,6 +150,7 @@ class Garden {
   pickPalette(i) { this.set({ palette: i }, () => this.refocus()); }
   updateUI() {
     const s = this.s, pc = this.pal(), isType = s.mode === 'type', pr = this.preset();
+    document.documentElement.setAttribute('data-mode', s.mode);
     this.app.style.background = pc.bg;
     this.cv.style.display = isType ? 'block' : 'none';
     this.bar.hidden = !(isType && CFG.showHint);
@@ -162,8 +172,21 @@ class Garden {
       b.style.background = s.mode === id ? '#FFFFFF' : 'transparent';
       b.style.color = s.mode === id ? '#000000' : '#BDBDBD';
       b.onclick = () => {
-        if (id === 'poster' && s.mode !== 'poster') { const t = this.liveText() || s.text; $('ptext').value = t; this.upd({ mode: 'poster', text: t }); }
-        else if (id === 'type' && s.mode !== 'type') this.set({ mode: 'type' }, () => { this.resize(); this.inp.focus({ preventScroll: true }); });
+        if (id === 'poster' && s.mode !== 'poster') {
+          if (document.activeElement === this.inp) this.inp.blur();
+          const t = this.liveText() || s.text;
+          $('ptext').value = t;
+          window.scrollTo(0, 0);
+          this.upd({ mode: 'poster', text: t });
+          this.syncVV();
+        } else if (id === 'type' && s.mode !== 'type') {
+          window.scrollTo(0, 0);
+          this.set({ mode: 'type' }, () => {
+            this.syncVV();
+            this.resize();
+            this.inp.focus({ preventScroll: true });
+          });
+        }
       };
       this.modes.appendChild(b);
     }
@@ -465,7 +488,10 @@ class Garden {
   }
   // sets tx/ty/tw on letters; keeps headroom for the garden above and below the type
   layoutCore(A, W, H, prevWrapped, tall) {
-    const maxW = W * 0.8, S0 = H * 0.28, LH = CFG.lineHeight;
+    const isMobile = W < 600;
+    const maxW = isMobile ? W * 0.72 : W * 0.8;
+    const S0 = Math.min(H * 0.28, isMobile ? W * 0.24 : H * 0.28);
+    const LH = CFG.lineHeight;
     const ws = A.map(l => l.br ? 0 : this.mw(l.ch));
     const words = []; let cur = null;
     A.forEach((l, i) => {
@@ -491,7 +517,7 @@ class Garden {
     const multi = words.filter(w => !w.sp && !w.br).length > 1;
     let wrapped = words.some(w => w.br) || (multi && (tall || S < H * 0.1 || (prevWrapped && S < H * 0.14)));
     if (wrapped) {
-      let lo = H * 0.03, hi = H * 0.15;
+      let lo = H * 0.03, hi = isMobile ? Math.min(H * 0.12, W * 0.18) : H * 0.15;
       for (let k = 0; k < 22; k++) {
         const mid = (lo + hi) / 2, ls = wrap(mid);
         const ok = ls.every(li => lineW(li, mid) <= maxW) && ls.length * LH * mid <= H * 0.82;
@@ -511,29 +537,95 @@ class Garden {
   layout(snap) {
     if (!this.W) return;
     const A = this.letters.filter(l => !l.dead);
-    const res = this.layoutCore(A, this.W, this.H, this.wrapped);
+    const isMobile = this.W < 600 || this.touch;
+    const res = this.layoutCore(A, this.W, this.H, this.wrapped, isMobile || this.H > this.W * 1.25);
     this.wrapped = res.wrapped;
+
+    const hasKb = document.documentElement.hasAttribute('data-kb');
+    const topPad = isMobile ? 64 : 50;
+    const botPad = hasKb ? 24 : (isMobile ? 150 : 80);
+    const sidePad = isMobile ? Math.max(16, this.W * 0.05) : 32;
+
+    const availW = Math.max(100, this.W - sidePad * 2);
+    const availH = Math.max(100, this.H - topPad - botPad);
+    const targetCenterX = this.W / 2;
+    const targetCenterY = topPad + availH / 2;
+
+    const baselineShift = targetCenterY - this.H / 2;
+    A.forEach(l => { l.ty += baselineShift; });
+
+    let S = res.S;
+    if (A.length > 0) {
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      const addP = (l, x, y, r) => {
+        const X = l.tx + x * S, Y = l.ty + y * S, R = (r || 0) * S;
+        x0 = Math.min(x0, X - R); x1 = Math.max(x1, X + R);
+        y0 = Math.min(y0, Y - R); y1 = Math.max(y1, Y + R);
+      };
+      for (const l of A) {
+        if (l.ch === ' ') continue;
+        addP(l, -l.tw / S / 2, -0.75); addP(l, l.tw / S / 2, 0.1);
+        const all = [...(l.els || []), ...(l.endEls || [])];
+        for (const e of all) {
+          if (e.t === 'stem') (e.pts || []).forEach(q => addP(l, q[0], q[1], 0.03));
+          else if (e.t === 'leaf') addP(l, e.x, e.y, e.L || 0.1);
+          else if (e.t === 'flower') addP(l, e.x, e.y, (e.R || 12) / S);
+        }
+      }
+      if (x0 < x1 && y0 < y1) {
+        const gw = x1 - x0, gh = y1 - y0;
+        const fitW = availW / gw, fitH = availH / gh;
+        const fit = Math.min(1, fitW, fitH);
+        if (fit < 1) {
+          S *= fit;
+          const ox = targetCenterX - (x0 + gw / 2) * fit;
+          const oy = targetCenterY - (y0 + gh / 2) * fit;
+          A.forEach(l => {
+            l.tx = l.tx * fit + ox;
+            l.ty = l.ty * fit + oy;
+            l.tw *= fit;
+          });
+        }
+      }
+    }
+
     A.forEach(l => { if (l.x == null) { l.x = l.tx; l.y = l.ty; } });
-    const S = res.S, last = A[A.length - 1];
+    const last = A[A.length - 1];
     this.St = S;
     this.ctx_ = last ? (last.br ? last.tx : last.tx + last.tw / 2 + 0.07 * S) : this.W / 2;
-    this.cty = last ? last.ty - 0.33 * S : this.H / 2;
+    this.cty = last ? last.ty - 0.33 * S : targetCenterY;
     if (snap || !this.Sd) { this.Sd = S; this.cx = this.ctx_; this.cy = this.cty; A.forEach(l => { l.x = l.tx; l.y = l.ty; }); }
   }
 
   // ---------- phone: keyboard + visible area ----------
   syncVV() {
     const vv = this.vv; if (!vv) return;
+    const de = document.documentElement;
+    if (this.s.mode !== 'type') {
+      de.removeAttribute('data-kb');
+      de.style.removeProperty('--tg-top');
+      de.style.removeProperty('--tg-h');
+      return;
+    }
     const w = Math.round(vv.width);
     if (this.vvW !== w) { this.vvW = w; this.vvMax = 0; }
     this.vvMax = Math.max(this.vvMax, vv.height);
-    const kb = this.vvMax - vv.height > 120, de = document.documentElement;
-    de.style.setProperty('--tg-top', vv.offsetTop + 'px');
-    de.style.setProperty('--tg-h', vv.height + 'px');
-    if (kb) de.setAttribute('data-kb', ''); else de.removeAttribute('data-kb');
-    if (!kb && this.kbWas && document.activeElement === this.inp) this.inp.blur();
+    const kb = this.vvMax - vv.height > 120;
+    if (kb) {
+      de.setAttribute('data-kb', '');
+      de.style.setProperty('--tg-top', Math.round(vv.offsetTop) + 'px');
+      de.style.setProperty('--tg-h', Math.round(vv.height) + 'px');
+    } else {
+      de.removeAttribute('data-kb');
+      de.style.removeProperty('--tg-top');
+      de.style.removeProperty('--tg-h');
+      if (this.kbWas && document.activeElement === this.inp) this.inp.blur();
+    }
+    const kbChanged = this.kbWas !== kb;
     this.kbWas = kb;
-    this.resize();
+    if (kbChanged || !kb) {
+      this.resize();
+    }
   }
   liveText() { return (this.letters || []).filter(l => !l.dead).map(l => l.br ? '\n' : l.ch).join('').trim(); }
   wither(now) {
