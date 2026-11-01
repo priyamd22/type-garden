@@ -1,4 +1,4 @@
-<video width="960" height="540" alt="garden-type-garden-breathe" src="https://github.com/user-attachments/assets/a2e641a0-080a-4327-8e41-967e40f8018a"></video>
+<img width="1920" height="998" alt="garden" src="https://github.com/user-attachments/assets/4fe6ca0b-0e49-4e58-a5a1-b0d67cbefa99" />
 
 
 Type Garden is a beautiful, generative typography art project built with Vanilla JavaScript and CSS, perfect for exploring the connection between words and nature. Users can type a message, choose from a variety of flower designs, and watch their words blossom into a unique, evolving garden.
