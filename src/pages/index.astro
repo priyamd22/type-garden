@@ -19,21 +19,32 @@ import "../styles/style.css"
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <meta name="generator" content={Astro.generator}>
 
+<!-- Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XL2YDDFZ8"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5XL2YDDFZ8');
+</script>
+
 <!-- Meta tags for SEO and Open Graph -->
 <meta name="description" content="Type Garden — a generative typography art project. Type a message, choose a flower, and watch it grow in a responsive garden that blooms with your words.">
 <meta name="keywords" content="generative art, typography, animated text, poetic typography, interactive art, CSS animation, garden, flowers">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://[YOUR-SITE-URL]/type-garden/">
+<meta property="og:url" content="https://type-garden.netlify.app">
 <meta property="og:title" content="Type Garden — Generative Typography Art">
 <meta property="og:description" content="Type a message, choose a flower, and watch it bloom. A poetic interactive typography experience.">
-<meta property="og:image" content="https://[YOUR-SITE-URL]/type-garden/images/opengraph.jpg">
+<meta property="og:image" content="https://type-garden.netlify.app/images/opengraph.png">
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://[YOUR-SITE-URL]/type-garden/">
+<meta property="twitter:url" content="https://type-garden.netlify.app">
 <meta property="twitter:title" content="Type Garden — Generative Typography Art">
 <meta property="twitter:description" content="Type a message, choose a flower, and watch it bloom.">
-<meta property="twitter:image" content="https://[YOUR-SITE-URL]/type-garden/images/opengraph.jpg">
+<meta property="twitter:image" content="https://type-garden.netlify.app/images/opengraph.png">
 </head>
 <body>
 <div data-tg="app" id="app">
