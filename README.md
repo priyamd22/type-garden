@@ -1,6 +1,6 @@
 <img width="1920" height="998" alt="garden" src="https://github.com/user-attachments/assets/4fe6ca0b-0e49-4e58-a5a1-b0d67cbefa99" />
 
-<div align="center">[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A4AJOBZ)</div>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A4AJOBZ)
 
 
 Type Garden is a beautiful, generative typography art project built with Vanilla JavaScript and CSS, perfect for exploring the connection between words and nature. Users can type a message, choose from a variety of flower designs, and watch their words blossom into a unique, evolving garden.
