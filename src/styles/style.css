@@ -11,12 +11,16 @@ html[data-touch][data-mode="type"][data-kb] [data-tg="app"]{top:var(--tg-top,0px
 [data-tg="hdr"]{position:absolute;top:calc(14px + env(safe-area-inset-top));left:calc(20px + env(safe-area-inset-left));z-index:5;display:flex;align-items:center;gap:14px;pointer-events:none;font-family:'DM Mono',ui-monospace,monospace;font-size:12px;line-height:1;letter-spacing:.04em}
 [data-tg="hdr"] .credit{opacity:.8}
 [data-tg="hdr"] .credit .heart{opacity:1;font-family:'Apple Color Emoji','Segoe UI Emoji',sans-serif}
-#kofi{pointer-events:auto;display:inline-flex;align-items:center;gap:6px;background:#FFF;color:#000;border:1px solid #FFF;border-radius:999px;padding:8px 13px;font:inherit;font-size:12px;font-weight:500;letter-spacing:.04em;text-decoration:none;cursor:pointer;transition:filter .12s,transform .12s}
-#kofi:hover{filter:brightness(.92);transform:translateY(-1px)}
-#kofi:active{transform:translateY(0)}
-#kofi svg{width:14px;height:14px;display:block;flex:none}
+.hdr-actions{display:inline-flex;align-items:center;gap:8px}
+#kofi,#github{pointer-events:auto;display:inline-flex;align-items:center;background:#FFF;color:#000;border:1px solid #FFF;border-radius:999px;font:inherit;text-decoration:none;cursor:pointer;transition:filter .12s,transform .12s}
+#kofi{gap:6px;padding:8px 13px;font-size:12px;font-weight:500;letter-spacing:.04em}
+#github{justify-content:center;width:34px;height:34px;box-sizing:border-box}
+#kofi:hover,#github:hover{filter:brightness(.92);transform:translateY(-1px)}
+#kofi:active,#github:active{transform:translateY(0)}
+#kofi svg{width:16px;height:16px;display:block;flex:none}
+#github svg{width:24px;height:24px;display:block;flex:none}
 @media (min-width:721px){[data-tg="poster"] [data-tg="panel"]{padding-top:76px}}
-@media (max-width:600px){[data-tg="hdr"]{left:calc(12px + env(safe-area-inset-left));top:calc(10px + env(safe-area-inset-top));font-size:10px;gap:6px;flex-direction:column;align-items:flex-start}#kofi{padding:6px 10px;font-size:10px}}
+@media (max-width:600px){[data-tg="hdr"]{left:calc(12px + env(safe-area-inset-left));top:calc(10px + env(safe-area-inset-top));font-size:10px;gap:6px;flex-direction:column;align-items:flex-start}#kofi{padding:6px 10px;font-size:10px}#github{width:30px;height:30px}#github svg{width:20px;height:20px}}
 @media (max-width:380px){[data-tg="hdr"] .made{display:none}}
 [data-tg="modes"]{position:absolute;top:calc(16px + env(safe-area-inset-top));right:calc(16px + env(safe-area-inset-right));z-index:5;display:flex;gap:4px;padding:4px;border:1px solid #2A2A2A;border-radius:999px;background:#000}
 [data-tg="modes"] button{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-size:12px;letter-spacing:.04em;cursor:pointer}
